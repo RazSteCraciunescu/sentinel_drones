@@ -1,0 +1,19 @@
+services:
+  sentinel-lab:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SENTINEL_ENVIRONMENT: docker-lab
+      SENTINEL_OBSERVER_TOKEN: observer-local-token
+      SENTINEL_OPERATOR_TOKEN: operator-local-token
+      SENTINEL_AUDITOR_TOKEN: auditor-local-token
+      SENTINEL_MAINTAINER_TOKEN: maintainer-local-token
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

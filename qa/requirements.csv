@@ -1,0 +1,37 @@
+requirement_id,area,requirement,priority,verification_method,acceptance_criteria,source
+FUN-001,Platform,The service shall expose a public health endpoint that states it is simulation-only.,P1,API test,GET /health returns 200 with status ok and simulation_only true.,Project scope
+FUN-002,Fleet,Authorized read roles shall be able to list the seeded simulated fleet.,P1,API test,GET /api/v1/fleet returns the three seeded aircraft in stable ID order.,Architecture
+FUN-003,Mission assurance,Operators shall be able to submit a mission plan for a non-operational safety decision.,P1,API test,A conforming mission returns approved=true and a projected recovery battery.,Test strategy
+FUN-004,Telemetry,Operators shall be able to submit synthetic telemetry frames.,P1,API test,A fresh in-order frame for a known aircraft returns HTTP 202.,Architecture
+FUN-005,Commands,"The gateway shall accept only hold, return_home, and land commands.",P1,Contract and API test,OpenAPI exposes exactly the three safe command values and accepted commands change simulated mode.,Safety boundary
+FUN-006,Audit,Auditors and maintainers shall be able to retrieve audit events.,P2,Authorization test,Authorized audit roles receive the append-only event list; operators are denied.,Threat model
+FUN-007,Metrics,Authorized read roles shall be able to retrieve assurance counters.,P2,API test,"Metrics include fleet, audit integrity, and rejection counters.",Test strategy
+FUN-008,Simulation reset,Only maintainers shall be able to reset the lab state.,P2,Authorization test,Maintainer receives HTTP 204 and other roles receive HTTP 403.,Architecture
+SAF-001,Altitude,Mission validation shall reject waypoints above the configured lab ceiling.,P1,Boundary test,Any waypoint above 120 m causes a rejected mission decision.,Safety case
+SAF-002,Geofence,Mission validation and telemetry evaluation shall detect the configured operating geofence.,P1,Boundary test,Plans outside the geofence are rejected and active breaches request return_home.,Safety case
+SAF-003,Restricted zone,The safety engine shall reject plans through the synthetic restricted zone and request recovery on entry.,P1,Boundary test,Coordinates inside the configured rectangle trigger rejection or return_home.,Safety case
+SAF-004,Launch energy,Mission validation shall reject launch battery below the configured minimum.,P1,Boundary test,Battery below 30 percent causes rejection.,FMEA
+SAF-005,Recovery reserve,Mission validation shall reject plans whose projected battery is below the requested reserve.,P1,Calculation test,Projected recovery battery is calculated and compared with reserve.,FMEA
+SAF-006,Critical energy,Critical battery telemetry shall request land.,P1,Property and boundary test,Battery at or below 12 percent always results in land.,Safety case
+SAF-007,Link degradation,Critically degraded command-link telemetry shall request return_home.,P1,Boundary and resilience test,Link quality below 30 percent results in return_home.,Threat model
+SAF-008,Sensor confidence,Low-confidence sensor telemetry shall request hold when no higher-priority hazard exists.,P1,Boundary test,Confidence below 0.4 results in hold.,AI risk note
+SAF-009,Fail-safe priority,"When multiple hazards exist, the fail-safe decision shall be deterministic.",P1,Combination test,"Critical battery takes priority over geofence, link, and confidence conditions.",Safety case
+SAF-010,Launch link quality,Mission validation shall reject launch link quality below the configured minimum.,P1,Boundary test,Link quality below 55 percent causes a rejected mission decision.,Safety case
+SAF-011,Active altitude,Telemetry above the configured altitude ceiling shall request return_home.,P1,Boundary and resilience test,Altitude at 120 m remains nominal and altitude above 120 m results in return_home.,Safety case
+SEC-001,Authentication,Protected endpoints shall require a valid X-Lab-Token.,P1,Security test,Missing and invalid tokens receive HTTP 401.,Threat model
+SEC-002,Authorization,Each protected operation shall enforce its allowed roles.,P1,Security test,"Observer, operator, auditor, and maintainer permissions match the access matrix.",Threat model
+SEC-003,Command freshness,Safe commands shall be rejected after their TTL or when timestamped too far in the future.,P1,Security negative test,Expired or future commands receive HTTP 409.,Threat model
+SEC-004,Command replay,A command_id shall be accepted at most once per lab state.,P1,Security negative test,The second use of a command_id receives HTTP 409.,Threat model
+SEC-005,Telemetry replay,Telemetry sequence numbers shall increase monotonically per aircraft.,P1,Security negative test,Duplicate and lower sequence numbers receive HTTP 409.,Threat model
+SEC-006,Telemetry freshness,Telemetry shall include timezone information and fall inside the configured age/skew window.,P1,Schema and security test,"Naive, stale, and excessively future timestamps are rejected.",Threat model
+SEC-007,Identifier validation,"Mission, command, and aircraft identifiers shall use a constrained uppercase identifier format.",P2,Input validation test,Path-like or malformed identifiers receive HTTP 422.,OWASP API Security
+SEC-008,Resource bounds,Variable-length input fields shall have explicit limits.,P2,Input validation test,Waypoint count and reason length over their limits receive HTTP 422.,OWASP API Security
+SEC-009,Audit integrity,Audit events shall form a verifiable SHA-256 hash chain.,P1,Unit and API test,Every event references the previous hash and the metrics endpoint reports a valid chain.,Threat model
+SEC-010,Operational isolation,"The project shall not expose real flight-control, radio, targeting, or payload interfaces.",P1,Architecture review,No route or dependency connects the lab to an aircraft or operational protocol.,Safety boundary
+RES-001,Observability,"Rejected mission, command, and telemetry counts shall be observable.",P2,API test,Metrics increase after rejected requests.,Test strategy
+QUA-001,Contract,The service shall publish an OpenAPI contract.,P2,Contract test,/openapi.json defines protected APIs and the X-Lab-Token scheme.,API strategy
+QUA-002,Coverage,The automated Python suite shall enforce at least 85 percent line and branch coverage.,P2,CI quality gate,pytest-cov fails the job below 85 percent.,Quality policy
+QUA-003,Continuous integration,"Pull requests and main-branch changes shall run validation, linting, type checking, tests, and browser checks.",P2,Workflow review,The CI workflow contains all stated stages.,DevSecOps plan
+QUA-004,Supply chain,The repository shall run static analysis and dependency auditing.,P2,Workflow review,"Bandit, pip-audit, CodeQL, and Dependabot are configured.",DevSecOps plan
+QUA-005,Traceability,Every baseline requirement shall have named verification evidence.,P1,Traceability script,tools/check_traceability.py exits successfully with no uncovered requirement.,QA governance
+SEC-011,Input integrity,State-changing request models shall reject unexpected object properties.,P1,Security test,An unrecognized request property returns HTTP 422 and no state change occurs.,Threat model

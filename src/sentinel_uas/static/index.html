@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentinel UAS Assurance Lab</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">SIMULATION ONLY</p>
+        <h1>Sentinel UAS Assurance Lab</h1>
+        <p class="subtitle">Fleet health, audit integrity, and safety-gate evidence.</p>
+      </div>
+      <span id="service-status" class="status neutral">Not checked</span>
+    </header>
+
+    <section class="auth-panel">
+      <label for="token">Local lab token</label>
+      <div class="token-row">
+        <input id="token" type="password" autocomplete="off" placeholder="observer-local-token">
+        <button id="load-button" type="button">Load assurance view</button>
+      </div>
+      <p id="message" role="status"></p>
+    </section>
+
+    <section class="cards" aria-label="Assurance metrics">
+      <article><span>Fleet</span><strong id="fleet-total">-</strong></article>
+      <article><span>Active</span><strong id="fleet-active">-</strong></article>
+      <article><span>Audit events</span><strong id="audit-events">-</strong></article>
+      <article><span>Audit chain</span><strong id="audit-valid">-</strong></article>
+    </section>
+
+    <section class="table-card">
+      <div class="section-title">
+        <h2>Simulated fleet</h2>
+        <small>No radio, autopilot, or real aircraft connection</small>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Call sign</th><th>Mode</th><th>Battery</th><th>Link</th></tr>
+          </thead>
+          <tbody id="fleet-body">
+            <tr><td colspan="5">Enter a local token to load data.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

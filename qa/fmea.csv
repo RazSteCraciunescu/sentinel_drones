@@ -1,0 +1,13 @@
+fmea_id,item,failure_mode,effect,severity,occurrence,detection,rpn,current_controls,verification,owner
+FM-01,Mission and fail-safe evaluators,Altitude limit not applied to plan or active telemetry,Route is approved or recovery is omitted above the configured ceiling,5,2,2,20,Explicit plan and active-frame ceiling checks; boundary tests,Automated boundary regression,Safety QA
+FM-02,Mission validator,Geofence edge treated incorrectly,Plan outside the range is approved,5,2,3,30,Inclusive boundary definition; outside-edge tests,Boundary review,Safety QA
+FM-03,Mission validator,Restricted zone omitted,Route enters a protected synthetic area,5,2,3,30,Separate zone function; plan and active-frame tests,Configuration review,Safety QA
+FM-04,Battery estimator,Consumption estimate too optimistic,Insufficient recovery reserve,5,4,4,80,Conservative configurable rate; reserve gate; HIL calibration backlog,Model review,Safety QA
+FM-05,Telemetry gateway,Duplicate sequence accepted,Old state overwrites newer state,5,2,2,20,Monotonic sequence check,Replay regression,Security QA
+FM-06,Telemetry gateway,Clock skew accepted,Future or stale data appears current,4,2,2,16,Age and future-skew windows; timezone requirement,Freshness tests,Security QA
+FM-07,Fail-safe engine,Conflicting hazards produce inconsistent action,Unpredictable recovery response,5,2,2,20,Ordered decision logic; multi-hazard test,Combination test,Systems QA
+FM-08,Command gateway,Duplicate command accepted,Repeated state transition or operator confusion,4,2,2,16,Unique command IDs; replay test,Security regression,Security QA
+FM-09,Authorization,Read role can write,Unauthorized change to simulated state,4,2,2,16,Role matrix dependencies; negative tests,RBAC suite,Security QA
+FM-10,Audit log,Hash link breaks silently,Evidence tampering is not detected,4,2,3,24,Chain verifier exposed through metrics,Integrity unit test,Security QA
+FM-11,Dashboard,Failed API request looks healthy,Operator misunderstands assurance state,3,2,2,12,Visible ERROR status and message,Playwright negative test,UI QA
+FM-12,Dependency pipeline,Known vulnerable dependency ships,Service exposure or evidence compromise,4,3,4,48,pip-audit; Dependabot; CodeQL,Scheduled workflow,DevSecOps

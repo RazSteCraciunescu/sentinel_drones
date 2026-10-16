@@ -1,0 +1,10 @@
+{"drone_id":"UAS-001","sequence":1,"sent_at":"2026-01-15T10:00:01+00:00","x_m":3,"y_m":2,"altitude_m":35,"battery_pct":89.8,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":2,"sent_at":"2026-01-15T10:00:02+00:00","x_m":6,"y_m":4,"altitude_m":35,"battery_pct":89.6,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":3,"sent_at":"2026-01-15T10:00:03+00:00","x_m":9,"y_m":6,"altitude_m":35,"battery_pct":89.4,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":4,"sent_at":"2026-01-15T10:00:04+00:00","x_m":12,"y_m":8,"altitude_m":35,"battery_pct":89.2,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":5,"sent_at":"2026-01-15T10:00:05+00:00","x_m":15,"y_m":10,"altitude_m":35,"battery_pct":89.0,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":6,"sent_at":"2026-01-15T10:00:06+00:00","x_m":18,"y_m":12,"altitude_m":35,"battery_pct":88.8,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":7,"sent_at":"2026-01-15T10:00:07+00:00","x_m":21,"y_m":14,"altitude_m":35,"battery_pct":88.6,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":8,"sent_at":"2026-01-15T10:00:08+00:00","x_m":24,"y_m":16,"altitude_m":35,"battery_pct":88.4,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":9,"sent_at":"2026-01-15T10:00:09+00:00","x_m":27,"y_m":18,"altitude_m":35,"battery_pct":88.2,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}
+{"drone_id":"UAS-001","sequence":10,"sent_at":"2026-01-15T10:00:10+00:00","x_m":30,"y_m":20,"altitude_m":35,"battery_pct":88.0,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}

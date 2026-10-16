@@ -1,0 +1,449 @@
+{
+  "info": {
+    "name": "Sentinel UAS Assurance Lab",
+    "description": "Simulation-only API checks for mission assurance, telemetry integrity, RBAC, replay protection, and audit evidence.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080"
+    },
+    {
+      "key": "observerToken",
+      "value": "observer-local-token"
+    },
+    {
+      "key": "operatorToken",
+      "value": "operator-local-token"
+    },
+    {
+      "key": "auditorToken",
+      "value": "auditor-local-token"
+    },
+    {
+      "key": "maintainerToken",
+      "value": "maintainer-local-token"
+    },
+    {
+      "key": "commandId",
+      "value": "CMD-POSTMAN-001"
+    },
+    {
+      "key": "telemetrySequence",
+      "value": "101"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"simulation boundary is explicit\", () => pm.expect(pm.response.json().simulation_only).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "List fleet",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{observerToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/fleet",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "fleet"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"three seeded aircraft\", () => pm.expect(pm.response.json()).to.have.length(3));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Validate safe mission",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{operatorToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/missions/validate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "missions",
+            "validate"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mission_id\": \"MSN-POSTMAN-001\",\n  \"drone_id\": \"UAS-001\",\n  \"mission_type\": \"infrastructure_inspection\",\n  \"waypoints\": [\n    {\n      \"x_m\": -40,\n      \"y_m\": 30,\n      \"altitude_m\": 40\n    },\n    {\n      \"x_m\": 40,\n      \"y_m\": 30,\n      \"altitude_m\": 45\n    }\n  ],\n  \"battery_pct\": 86,\n  \"estimated_duration_min\": 20,\n  \"reserve_battery_pct\": 20,\n  \"link_quality_pct\": 92\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"approved\", () => pm.expect(pm.response.json().approved).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Reject geofence breach",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{operatorToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/missions/validate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "missions",
+            "validate"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mission_id\": \"MSN-POSTMAN-002\",\n  \"drone_id\": \"UAS-001\",\n  \"mission_type\": \"training\",\n  \"waypoints\": [\n    {\n      \"x_m\": 501,\n      \"y_m\": 0,\n      \"altitude_m\": 40\n    }\n  ],\n  \"battery_pct\": 86,\n  \"estimated_duration_min\": 10,\n  \"reserve_battery_pct\": 20,\n  \"link_quality_pct\": 92\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"business rejection returned\", () => pm.expect(pm.response.json().approved).to.eql(false));",
+              "pm.test(\"geofence reason present\", () => pm.expect(pm.response.json().reasons.join(\" \")).to.include(\"geofence\"));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Submit nominal telemetry",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set(\"nowIso\", new Date().toISOString());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"accepted\", () => pm.response.to.have.status(202));",
+              "pm.test(\"no fail-safe\", () => pm.expect(pm.response.json().failsafe_action).to.eql(null));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{operatorToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"drone_id\": \"UAS-001\",\n  \"sequence\": \"{{telemetrySequence}}\",\n  \"sent_at\": \"{{nowIso}}\",\n  \"x_m\": 10,\n  \"y_m\": 20,\n  \"altitude_m\": 35,\n  \"battery_pct\": 80,\n  \"link_quality_pct\": 90,\n  \"sensor_confidence\": 0.95,\n  \"mode\": \"active\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/telemetry",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "telemetry"
+          ]
+        },
+        "description": "Fresh synthetic frame. Increment telemetrySequence before repeating."
+      },
+      "response": []
+    },
+    {
+      "name": "Submit safe hold command",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set(\"nowIso\", new Date().toISOString());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"accepted\", () => pm.response.to.have.status(202));",
+              "pm.test(\"mode is hold\", () => pm.expect(pm.response.json().resulting_mode).to.eql(\"hold\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{operatorToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"command_id\": \"{{commandId}}\",\n  \"drone_id\": \"UAS-001\",\n  \"action\": \"hold\",\n  \"issued_at\": \"{{nowIso}}\",\n  \"ttl_seconds\": 15,\n  \"reason\": \"operator safety check\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/commands/safe",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "commands",
+            "safe"
+          ]
+        },
+        "description": "Run twice without changing commandId to demonstrate replay rejection."
+      },
+      "response": []
+    },
+    {
+      "name": "Read audit events",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{auditorToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/audit/events",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "audit",
+            "events"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"auditor is allowed\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Read assurance metrics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{observerToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assurance/metrics",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assurance",
+            "metrics"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"chain is valid\", () => pm.expect(pm.response.json().audit_chain_valid).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Reset simulation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Lab-Token",
+            "value": "{{maintainerToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/simulation/reset",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "simulation",
+            "reset"
+          ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"reset accepted\", () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}

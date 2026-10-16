@@ -1,0 +1,6 @@
+{"case":"critical_battery","frame":{"drone_id":"UAS-001","sequence":101,"sent_at":"2026-01-15T10:00:01+00:00","x_m":3,"y_m":2,"altitude_m":35,"battery_pct":11,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}}
+{"case":"link_degradation","frame":{"drone_id":"UAS-001","sequence":102,"sent_at":"2026-01-15T10:00:01+00:00","x_m":3,"y_m":2,"altitude_m":35,"battery_pct":89.8,"link_quality_pct":20,"sensor_confidence":0.96,"mode":"active"}}
+{"case":"low_sensor_confidence","frame":{"drone_id":"UAS-001","sequence":103,"sent_at":"2026-01-15T10:00:01+00:00","x_m":3,"y_m":2,"altitude_m":35,"battery_pct":89.8,"link_quality_pct":92,"sensor_confidence":0.2,"mode":"active"}}
+{"case":"geofence_breach","frame":{"drone_id":"UAS-001","sequence":104,"sent_at":"2026-01-15T10:00:01+00:00","x_m":700,"y_m":2,"altitude_m":35,"battery_pct":89.8,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}}
+{"case":"restricted_zone_entry","frame":{"drone_id":"UAS-001","sequence":105,"sent_at":"2026-01-15T10:00:01+00:00","x_m":150,"y_m":0,"altitude_m":35,"battery_pct":89.8,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}}
+{"case":"altitude_ceiling_breach","frame":{"drone_id":"UAS-001","sequence":106,"sent_at":"2026-01-15T10:00:01+00:00","x_m":3,"y_m":2,"altitude_m":120.01,"battery_pct":89.8,"link_quality_pct":92,"sensor_confidence":0.96,"mode":"active"}}

@@ -1,0 +1,57 @@
+name: Defect report
+description: Report reproducible behavior in the simulation lab
+title: "[DEFECT] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include real UAS, network, location, credential, or operational data."
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Mission validation
+        - Telemetry
+        - Safe commands
+        - Authentication and authorization
+        - Audit evidence
+        - Dashboard
+        - CI and tooling
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Suggested severity
+      options:
+        - S1 - Critical safety/security impact
+        - S2 - High
+        - S3 - Medium
+        - S4 - Low
+    validations:
+      required: true

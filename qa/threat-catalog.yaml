@@ -1,0 +1,119 @@
+version: 1
+scope: simulation-only Sentinel UAS assurance service
+review_date: 2026-09-12
+threats:
+  - id: THR-001
+    category: spoofing
+    asset: protected API operations
+    scenario: a caller presents a missing, invalid, or disclosed lab token
+    controls:
+      - server-side authentication on protected endpoints
+      - constant-time token comparison
+      - separate tokens for four roles
+    verification:
+      - tests/security/test_authorization.py
+    residual_risk: static bearer tokens have no lifecycle, named identity, or multifactor assurance
+
+  - id: THR-002
+    category: tampering
+    asset: telemetry state integrity
+    scenario: a stale, future-dated, duplicate, or out-of-order frame is used as current state
+    controls:
+      - timezone requirement
+      - age and clock-skew windows
+      - per-aircraft monotonic sequence
+      - bounded data model
+    verification:
+      - tests/api/test_telemetry.py
+      - tests/security/test_input_hardening.py
+    residual_risk: frames are not cryptographically authenticated and sequence state is not durable
+
+  - id: THR-003
+    category: tampering
+    asset: safe-command integrity
+    scenario: an expired or duplicate command is processed
+    controls:
+      - issued-at and TTL validation
+      - command ID claim
+      - closed safe-command enum
+    verification:
+      - tests/api/test_commands.py
+      - tests/contract/test_openapi.py
+    residual_risk: idempotency state resets with the process
+
+  - id: THR-004
+    category: elevation_of_privilege
+    asset: role separation
+    scenario: a lower role invokes an operator, auditor, or maintainer function
+    controls:
+      - endpoint-specific role dependencies
+      - parameterized authorization matrix tests
+    verification:
+      - tests/security/test_authorization.py
+    residual_risk: role assignment is tied to possession of static local tokens
+
+  - id: THR-005
+    category: repudiation
+    asset: decision evidence
+    scenario: a safety-relevant decision cannot be reconstructed or was altered
+    controls:
+      - structured audit event
+      - previous-hash linkage
+      - chain verification metric
+    verification:
+      - tests/unit/test_audit.py
+    residual_risk: evidence is local, unsigned, unnamed, and volatile
+
+  - id: THR-006
+    category: denial_of_service
+    asset: API availability
+    scenario: oversized or repeated input consumes service resources
+    controls:
+      - bounded identifiers, text, coordinates, and list sizes
+      - unexpected-property rejection
+      - local performance profiles
+    verification:
+      - tests/security/test_input_hardening.py
+      - performance/k6_smoke.js
+      - performance/locustfile.py
+    residual_risk: the application has no rate limiter or distributed capacity design
+
+  - id: THR-007
+    category: safety_configuration
+    asset: mission decision correctness
+    scenario: incorrect envelope or threshold configuration approves a hazardous synthetic plan
+    controls:
+      - explicit settings
+      - mission and active-telemetry boundary tests
+      - risk register and FMEA review
+    verification:
+      - tests/api/test_missions.py
+      - tests/unit/test_safety.py
+    residual_risk: configuration is not signed and has no four-eyes approval workflow
+
+  - id: THR-008
+    category: supply_chain
+    asset: source and build integrity
+    scenario: a vulnerable or malicious dependency or workflow change enters the build
+    controls:
+      - dependency updates
+      - dependency audit
+      - Bandit and CodeQL
+      - least-privilege workflow permissions
+    verification:
+      - .github/workflows/security.yml
+      - .github/dependabot.yml
+    residual_risk: release provenance and an attested SBOM are not yet produced
+
+  - id: THR-009
+    category: scope_erosion
+    asset: public safety boundary
+    scenario: operational flight, payload, radio, targeting, or weapon behavior is added incrementally
+    controls:
+      - ADR-0001 and ADR-0003
+      - exact command-enum contract test
+      - contribution and security policy
+    verification:
+      - tests/contract/test_openapi.py
+      - docs/adr/0001-simulation-only-boundary.md
+    residual_risk: repository governance still depends on human review

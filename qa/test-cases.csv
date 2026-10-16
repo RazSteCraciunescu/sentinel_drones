@@ -1,0 +1,50 @@
+test_case_id,title,requirement_id,type,priority,preconditions,steps,expected_result,automation,status,tags
+TC-FUN-001,Health endpoint identifies the lab,FUN-001,API,P1,Service running,GET /health,200; status=ok; simulation_only=true,pytest,Active,"smoke,contract"
+TC-FUN-002,Observer reads seeded fleet,FUN-002,API,P1,Observer token,GET /api/v1/fleet with token,Three records ordered UAS-001 to UAS-003,pytest,Active,"fleet,rbac"
+TC-MSN-001,Approve a conforming mission,FUN-003,API,P1,Operator token and UAS-001 available,POST nominal mission,approved=true and projected recovery battery returned,"pytest,Postman",Active,"mission,positive"
+TC-SAF-001,Reject altitude above ceiling,SAF-001,Boundary,P1,Operator token,Submit waypoint at 121 m,Mission rejected with ceiling reason,pytest,Active,"altitude,negative"
+TC-SAF-002,Reject mission outside geofence,SAF-002,Boundary,P1,Operator token,Submit waypoint x=501,Mission rejected with geofence reason,"pytest,Postman",Active,"geofence,negative"
+TC-SAF-003,Recover after geofence breach,SAF-002,Resilience,P1,Operator token,Submit fresh telemetry outside geofence,Frame accepted for evidence and failsafe_action=return_home,pytest,Active,"geofence,failsafe"
+TC-SAF-004,Reject route through restricted zone,SAF-003,Boundary,P1,Operator token,Submit waypoint x=150 y=0,Mission rejected with restricted-zone reason,pytest,Active,restricted-zone
+TC-SAF-005,Recover after restricted-zone entry,SAF-003,Resilience,P1,Synthetic active aircraft,Evaluate frame inside zone,return_home selected,pytest,Active,"restricted-zone,failsafe"
+TC-SAF-006,Reject launch with insufficient battery,SAF-004,Boundary,P1,Operator token,Submit mission at 29 percent battery,Mission rejected,pytest,Active,battery
+TC-SAF-007,Enforce recovery reserve,SAF-005,Calculation,P1,Operator token,Submit long mission with projected 15 percent and 20 percent reserve,Mission rejected and projected value equals 15,pytest,Active,"battery,reserve"
+TC-SAF-008,Land on critical battery,SAF-006,Property,P1,Safety engine,Generate values from 0 through 12 percent,All values select land,Hypothesis,Active,"battery,property"
+TC-RES-001,Return home below link threshold,SAF-007,Resilience,P1,Operator token,Submit link quality 29.9,return_home selected,pytest,Active,"link,failsafe"
+TC-RES-002,Hold on low sensor confidence,SAF-008,Resilience,P1,Operator token,Submit confidence 0.2 without higher-priority hazard,hold selected,pytest,Active,"sensor,failsafe"
+TC-RES-003,Apply deterministic fail-safe priority,SAF-009,Combination,P1,Operator token,Submit battery=10 link=1 x=900 confidence=0.1,land selected,pytest,Active,"priority,failsafe"
+TC-SAF-009,Reject launch below link-quality minimum,SAF-010,Boundary,P1,Operator token,Submit mission with link quality 54,Mission rejected with launch link-quality reason,pytest,Active,"link,launch,negative"
+TC-RES-004,Enforce active altitude boundary,SAF-011,Resilience,P1,Operator token,Submit telemetry at 120 m and 120.01 m,120 m remains nominal; 120.01 m selects return_home,pytest,Active,"altitude,boundary,failsafe"
+TC-TEL-001,Accept nominal telemetry,FUN-004,API,P1,Operator token,POST a fresh sequence 1 frame,202 and no failsafe,"pytest,Postman",Active,"telemetry,positive"
+TC-SEC-001,Reject missing token,SEC-001,Security,P1,None,Call protected endpoint without header,401 Missing X-Lab-Token,pytest,Active,"authn,negative"
+TC-SEC-002,Reject invalid token,SEC-001,Security,P1,None,Call protected endpoint with wrong token,401 Invalid X-Lab-Token,pytest,Active,"authn,negative"
+TC-SEC-003,Prevent observer command submission,SEC-002,Security,P1,Observer token,POST a safe command,403,pytest,Active,rbac
+TC-SEC-004,Prevent operator audit access,SEC-002,Security,P1,Operator token,GET audit events,403,pytest,Active,rbac
+TC-SEC-005,Reject expired command,SEC-003,Security,P1,Operator token,POST command older than TTL,409 Command has expired,pytest,Active,freshness
+TC-SEC-006,Reject duplicate command ID,SEC-004,Security,P1,Operator token,Submit same command twice,First 202; second 409,"pytest,Postman",Active,replay
+TC-SEC-007,Reject telemetry replay,SEC-005,Security,P1,Operator token,Submit the same sequence twice,First 202; second 409,"pytest,Postman",Active,"replay,telemetry"
+TC-SEC-008,Reject stale telemetry,SEC-006,Security,P1,Operator token,Submit frame older than 30 seconds,409 stale,pytest,Active,"freshness,telemetry"
+TC-SEC-009,Require timezone-aware telemetry,SEC-006,Schema,P1,Operator token,Submit sent_at without offset,422,pytest,Active,"schema,time"
+TC-SEC-010,Reject malformed identifier,SEC-007,Security,P2,Operator token,Use path-like mission ID,422,pytest,Active,input-validation
+TC-SEC-011,Bound waypoint count,SEC-008,Security,P2,Operator token,Submit 51 waypoints,422,pytest,Active,resource-limit
+TC-SEC-012,Bound free-text reason,SEC-008,Security,P2,Operator token,Submit 201-character reason,422,pytest,Active,resource-limit
+TC-CMD-001,Contract exposes safe commands only,FUN-005,Contract,P1,Service running,Inspect OpenAPI SafeCommandAction enum,"Exactly hold, return_home, land",pytest,Active,"contract,commands"
+TC-CMD-002,Safe hold command changes mode,FUN-005,API,P1,Operator token,POST hold command,202 and resulting_mode=hold,"pytest,Postman",Active,commands
+TC-AUD-001,Auditor retrieves events,FUN-006,Authorization,P2,At least one audited action,GET events with auditor token,200 and event details,pytest,Active,"audit,rbac"
+TC-AUD-002,Verify audit hash linkage,SEC-009,Unit,P1,Audit log with two events,Verify second previous_hash equals first event_hash,Chain verifies true,pytest,Active,"audit,integrity"
+TC-MET-001,Expose rejection counters,RES-001,API,P2,At least one rejected replay,GET assurance metrics,Relevant counter incremented; chain remains valid,pytest,Active,"metrics,observability"
+TC-RST-001,Restrict simulation reset,FUN-008,Authorization,P2,Operator and maintainer tokens,POST reset with each role,Operator 403; maintainer 204,pytest,Active,"rbac,reset"
+TC-CON-001,OpenAPI declares token scheme,QUA-001,Contract,P2,Service running,Inspect components.securitySchemes,API key header named X-Lab-Token,pytest,Active,openapi
+TC-ARC-001,Review simulation-only architecture boundary,SEC-010,Review,P1,Architecture and route inventory,"Confirm no real protocol, radio, payload, or targeting integration",Boundary documented and route inventory clean,Manual review,Active,"architecture,safety"
+TC-ARC-002,Unknown real-control route remains absent,SEC-010,Contract,P1,Service running,GET /api/v1/flight-controller/connect,404,pytest,Active,"architecture,negative"
+TC-QUA-001,Enforce coverage gate,QUA-002,Quality gate,P2,Dev dependencies installed,Run pytest with coverage,Job fails below 85 percent,CI,Active,coverage
+TC-QUA-002,Run pull-request CI,QUA-003,Pipeline,P2,GitHub Actions enabled,Open pull request,"Validation, lint, type, test, and browser jobs run",GitHub Actions,Active,ci
+TC-QUA-003,Run security workflow,QUA-004,Pipeline,P2,GitHub Actions enabled,Push or scheduled run,"Bandit, pip-audit, and CodeQL complete",GitHub Actions,Active,devsecops
+TC-QUA-004,Detect uncovered requirement,QUA-005,Tooling,P1,Requirements and traceability CSVs,Run traceability checker,Zero uncovered or unknown requirements,Python tool,Active,traceability
+TC-SEC-013,Reject an unexpected command property,SEC-011,Security,P1,Operator token,Add admin_override to a valid command and submit it,HTTP 422; command is not processed,pytest,Active,"schema,input-hardening"
+TC-CMD-003,Safe return-home command changes mode,FUN-005,API,P1,Operator token,POST return_home command,202 and resulting_mode=return_home,pytest,Active,"commands,state-transition"
+TC-CMD-004,Safe land command changes mode,FUN-005,API,P1,Operator token,POST land command,202 and resulting_mode=landed,pytest,Active,"commands,state-transition"
+TC-SEC-014,Reject future-dated command,SEC-003,Security,P1,Operator token,POST command more than five seconds in the future,409 future timestamp rejection,pytest,Active,"freshness,clock-skew"
+TC-SEC-015,Reject lower telemetry sequence,SEC-005,Security,P1,Sequence 10 already accepted,Submit sequence 9,409 out-of-order rejection,pytest,Active,"replay,ordering"
+TC-SEC-016,Reject future-dated telemetry,SEC-006,Security,P1,Operator token,Submit frame more than five seconds in the future,409 future timestamp rejection,pytest,Active,"freshness,clock-skew"
+TC-AUD-003,Expose audit-chain verification in metrics,SEC-009,API,P1,Authenticated read role,GET assurance metrics after audited activity,audit_chain_valid=true,pytest,Active,"audit,metrics"

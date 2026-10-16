@@ -1,0 +1,37 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 4 * * 1"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  dependency-and-sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Bandit
+        run: bandit -c pyproject.toml -r src
+      - name: Python dependency audit
+        run: pip-audit
+
+  codeql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: python,javascript-typescript
+          build-mode: none
+      - uses: github/codeql-action/analyze@v4

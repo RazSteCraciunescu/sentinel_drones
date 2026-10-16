@@ -1,0 +1,55 @@
+{
+  "safe_mission": {
+    "mission_id": "MSN-DATA-001",
+    "drone_id": "UAS-001",
+    "mission_type": "search_and_rescue",
+    "waypoints": [
+      {
+        "x_m": -120,
+        "y_m": 80,
+        "altitude_m": 50
+      },
+      {
+        "x_m": -60,
+        "y_m": 120,
+        "altitude_m": 55
+      }
+    ],
+    "battery_pct": 88,
+    "estimated_duration_min": 24,
+    "reserve_battery_pct": 25,
+    "link_quality_pct": 91
+  },
+  "outside_geofence": {
+    "mission_id": "MSN-DATA-002",
+    "drone_id": "UAS-001",
+    "mission_type": "training",
+    "waypoints": [
+      {
+        "x_m": 520,
+        "y_m": 0,
+        "altitude_m": 35
+      }
+    ],
+    "battery_pct": 88,
+    "estimated_duration_min": 10,
+    "reserve_battery_pct": 20,
+    "link_quality_pct": 91
+  },
+  "insufficient_reserve": {
+    "mission_id": "MSN-DATA-003",
+    "drone_id": "UAS-003",
+    "mission_type": "perimeter_observation",
+    "waypoints": [
+      {
+        "x_m": -100,
+        "y_m": -100,
+        "altitude_m": 40
+      }
+    ],
+    "battery_pct": 45,
+    "estimated_duration_min": 100,
+    "reserve_battery_pct": 20,
+    "link_quality_pct": 80
+  }
+}

@@ -1,0 +1,13 @@
+mapping_id,nist_csf_function,owasp_api_theme,control_objective,evidence,status
+MAP-001,Govern,OWASP API8:2023 Security Misconfiguration,Scope boundary and architecture decisions,docs/adr/0001-simulation-only-boundary.md; docs/architecture.md,Partial
+MAP-002,Govern,OWASP API9:2023 Improper Inventory Management,Requirements and interface inventory,qa/requirements.csv; tests/contract/test_openapi.py,Implemented
+MAP-003,Identify,OWASP API1:2023 Broken Object Level Authorization,Asset and object-access review,docs/threat-model.md; tests/security/test_authorization.py,Partial
+MAP-004,Protect,OWASP API2:2023 Broken Authentication,API-key authentication and negative tests,src/sentinel_uas/auth.py; tests/security/test_authorization.py,Lab control
+MAP-005,Protect,OWASP API3:2023 Broken Object Property Level Authorization,Closed models and unexpected-property rejection,src/sentinel_uas/models.py; tests/security/test_input_hardening.py,Implemented
+MAP-006,Protect,OWASP API5:2023 Broken Function Level Authorization,Endpoint-specific role matrix,src/sentinel_uas/app.py; tests/security/test_authorization.py,Implemented
+MAP-007,Protect,OWASP API4:2023 Unrestricted Resource Consumption,Bounded fields and waypoint count,src/sentinel_uas/models.py; performance/k6_smoke.js,Partial
+MAP-008,Detect,OWASP API6:2023 Unrestricted Access to Sensitive Business Flows,Replay and rejection counters,tests/api/test_commands.py; tests/api/test_telemetry.py,Partial
+MAP-009,Detect,OWASP API8:2023 Security Misconfiguration,Static analysis and dependency checks,.github/workflows/security.yml,Implemented
+MAP-010,Respond,No direct one-to-one mapping,Deterministic fail-safe response,src/sentinel_uas/safety.py; tests/resilience/test_failsafe_behaviour.py,Lab control
+MAP-011,Recover,No direct one-to-one mapping,Reproducible reset and clean rebuild,src/sentinel_uas/store.py; docs/release-checklist.md,Implemented
+MAP-012,Govern,OWASP API10:2023 Unsafe Consumption of APIs,External integration excluded and tracked as future risk,docs/architecture.md; qa/risk-register.csv,Not applicable in v0.1
